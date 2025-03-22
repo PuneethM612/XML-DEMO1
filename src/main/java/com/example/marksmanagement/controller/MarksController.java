@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,14 +79,21 @@ public class MarksController {
 
     @GetMapping("/search/results")
     public String searchMarks(@RequestParam String rollNumber, @RequestParam ExamType examType, Model model) {
-        List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
-        Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
-        
-        model.addAttribute("marks", marks);
-        model.addAttribute("student", student.orElse(null));
-        model.addAttribute("examType", examType);
-        
-        return "marks-results";
+        try {
+            List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
+            Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
+            
+            model.addAttribute("marks", marks != null ? marks : Collections.emptyList());
+            model.addAttribute("student", student.orElse(null));
+            model.addAttribute("examType", examType);
+            
+            return "marks-results";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error retrieving marks: " + e.getMessage());
+            model.addAttribute("students", studentService.getAllStudents());
+            model.addAttribute("examTypes", ExamType.values());
+            return "search-marks";
+        }
     }
 
     @GetMapping("/edit/{studentId}/{subjectId}/{examType}")

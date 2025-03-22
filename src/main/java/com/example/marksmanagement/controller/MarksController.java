@@ -78,21 +78,39 @@ public class MarksController {
     }
 
     @GetMapping("/search/results")
-    public String searchMarks(@RequestParam String rollNumber, @RequestParam ExamType examType, Model model) {
+    public String searchMarks(@RequestParam String rollNumber, @RequestParam ExamType examType, Model model, RedirectAttributes redirectAttributes) {
         try {
-            List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
-            Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
+            System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);
             
+            // Get student first
+            Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
+            if (!student.isPresent()) {
+                System.out.println("Student not found for roll number: " + rollNumber);
+                redirectAttributes.addFlashAttribute("error", "Student not found for roll number: " + rollNumber);
+                model.addAttribute("students", studentService.getAllStudents());
+                model.addAttribute("examTypes", ExamType.values());
+                return "redirect:/marks/search";
+            }
+            
+            // Get marks for student and exam type
+            List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
+            System.out.println("Found " + (marks != null ? marks.size() : 0) + " marks for student");
+            
+            // Add all required attributes to the model
             model.addAttribute("marks", marks != null ? marks : Collections.emptyList());
-            model.addAttribute("student", student.orElse(null));
+            model.addAttribute("student", student.get());
             model.addAttribute("examType", examType);
             
+            // Return the view name without layout reference
             return "marks-results";
         } catch (Exception e) {
-            model.addAttribute("error", "Error retrieving marks: " + e.getMessage());
-            model.addAttribute("students", studentService.getAllStudents());
-            model.addAttribute("examTypes", ExamType.values());
-            return "search-marks";
+            // Log the exception details for debugging
+            System.err.println("Error in searchMarks: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Add error message and redirect to search page
+            redirectAttributes.addFlashAttribute("error", "Error retrieving marks: " + e.getMessage());
+            return "redirect:/marks/search";
         }
     }
 

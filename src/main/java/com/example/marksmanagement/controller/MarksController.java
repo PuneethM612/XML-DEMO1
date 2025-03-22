@@ -82,13 +82,19 @@ public class MarksController {
         try {
             System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);
             
+            // Validate input parameters
+            if (rollNumber == null || rollNumber.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Roll number cannot be empty");
+                return "redirect:/marks/search";
+            }
+            
             // Get student first
             Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
             if (!student.isPresent()) {
                 System.out.println("Student not found for roll number: " + rollNumber);
                 redirectAttributes.addFlashAttribute("error", "Student not found for roll number: " + rollNumber);
-                model.addAttribute("students", studentService.getAllStudents());
-                model.addAttribute("examTypes", ExamType.values());
+                redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
+                redirectAttributes.addFlashAttribute("examTypes", ExamType.values());
                 return "redirect:/marks/search";
             }
             
@@ -110,6 +116,8 @@ public class MarksController {
             
             // Add error message and redirect to search page
             redirectAttributes.addFlashAttribute("error", "Error retrieving marks: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
+            redirectAttributes.addFlashAttribute("examTypes", ExamType.values());
             return "redirect:/marks/search";
         }
     }

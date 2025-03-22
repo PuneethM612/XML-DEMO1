@@ -48,13 +48,29 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public List<Marks> getMarksByStudentAndExamType(String rollNumber, ExamType examType) {
         try {
+            System.out.println("Attempting direct query for student marks with rollNumber=" + rollNumber + ", examType=" + examType);
             // First try direct query with rollNumber if repository supports it
-            return marksRepository.findByStudent_RollNumberAndExamType(rollNumber, examType);
+            List<Marks> marks = marksRepository.findByStudent_RollNumberAndExamType(rollNumber, examType);
+            System.out.println("Found " + marks.size() + " marks directly using rollNumber query");
+            return marks;
         } catch (Exception e) {
             // Fallback to the original implementation if direct query fails
             System.out.println("Direct query failed, falling back to student object query: " + e.getMessage());
-            Optional<Student> student = studentRepository.findById(rollNumber);
-            return student.map(s -> marksRepository.findByStudentAndExamType(s, examType)).orElse(Collections.emptyList());
+            try {
+                Optional<Student> student = studentRepository.findById(rollNumber);
+                if (!student.isPresent()) {
+                    System.out.println("Student not found with rollNumber: " + rollNumber);
+                    return Collections.emptyList();
+                }
+                
+                List<Marks> marks = marksRepository.findByStudentAndExamType(student.get(), examType);
+                System.out.println("Found " + marks.size() + " marks using student object query");
+                return marks;
+            } catch (Exception ex) {
+                System.err.println("Error in fallback query: " + ex.getMessage());
+                ex.printStackTrace();
+                return Collections.emptyList();
+            }
         }
     }
 

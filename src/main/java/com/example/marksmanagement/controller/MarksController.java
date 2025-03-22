@@ -78,19 +78,32 @@ public class MarksController {
     }
 
     @GetMapping("/search/results")
-    public String searchMarks(@RequestParam String rollNumber, @RequestParam ExamType examType, Model model, RedirectAttributes redirectAttributes) {
+    public String searchMarks(@RequestParam(required = false) String rollNumber, 
+                             @RequestParam(required = false) ExamType examType, 
+                             Model model, 
+                             RedirectAttributes redirectAttributes) {
+        System.out.println("Entering searchMarks with rollNumber=" + rollNumber + ", examType=" + examType);
+        
         try {
-            System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);
-            
             // Validate input parameters
             if (rollNumber == null || rollNumber.trim().isEmpty()) {
+                System.out.println("Roll number is empty or null");
                 redirectAttributes.addFlashAttribute("error", "Roll number cannot be empty");
+                redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
+                redirectAttributes.addFlashAttribute("examTypes", ExamType.values());
                 return "redirect:/marks/search";
             }
             
+            if (examType == null) {
+                System.out.println("Exam type is null, defaulting to MIDTERM");
+                examType = ExamType.MIDTERM; // Default to prevent NPE
+            }
+            
+            System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);
+            
             // Get student first
-            Optional<Student> student = studentService.getStudentByRollNumber(rollNumber);
-            if (!student.isPresent()) {
+            Optional<Student> studentOpt = studentService.getStudentByRollNumber(rollNumber);
+            if (!studentOpt.isPresent()) {
                 System.out.println("Student not found for roll number: " + rollNumber);
                 redirectAttributes.addFlashAttribute("error", "Student not found for roll number: " + rollNumber);
                 redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
@@ -98,26 +111,38 @@ public class MarksController {
                 return "redirect:/marks/search";
             }
             
+            Student student = studentOpt.get();
+            System.out.println("Found student: " + student.getName());
+            
             // Get marks for student and exam type
             List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
             System.out.println("Found " + (marks != null ? marks.size() : 0) + " marks for student");
             
+            if (marks == null) {
+                System.out.println("Marks list is null, creating empty list");
+                marks = Collections.emptyList();
+            }
+            
             // Add all required attributes to the model
-            model.addAttribute("marks", marks != null ? marks : Collections.emptyList());
-            model.addAttribute("student", student.get());
+            model.addAttribute("marks", marks);
+            model.addAttribute("student", student);
             model.addAttribute("examType", examType);
             
-            // Return the view name without layout reference
+            System.out.println("Returning marks-results template");
             return "marks-results";
         } catch (Exception e) {
             // Log the exception details for debugging
-            System.err.println("Error in searchMarks: " + e.getMessage());
+            System.err.println("Exception in searchMarks: " + e.getMessage());
             e.printStackTrace();
             
             // Add error message and redirect to search page
             redirectAttributes.addFlashAttribute("error", "Error retrieving marks: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
-            redirectAttributes.addFlashAttribute("examTypes", ExamType.values());
+            try {
+                redirectAttributes.addFlashAttribute("students", studentService.getAllStudents());
+                redirectAttributes.addFlashAttribute("examTypes", ExamType.values());
+            } catch (Exception ex) {
+                System.err.println("Error loading fallback data: " + ex.getMessage());
+            }
             return "redirect:/marks/search";
         }
     }

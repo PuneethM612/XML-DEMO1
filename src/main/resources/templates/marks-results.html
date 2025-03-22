@@ -5,99 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marks Results - Student Marks Management</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        footer {
+            margin-top: 50px;
+            padding: 20px 0;
+            background-color: #343a40;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">Student Marks Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/students}">Students</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/subjects}">Subjects</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/marks}">Marks</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/marks/search}">Search Marks</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Marks Results</h2>
-            <a th:href="@{/marks/search}" class="btn btn-secondary">Back to Search</a>
-        </div>
-
-        <!-- Student Information -->
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Student Information</h5>
-            </div>
-            <div class="card-body">
-                <div th:if="${student != null}">
-                    <p><strong>Name:</strong> <span th:text="${student.name}">Student Name</span></p>
-                    <p><strong>Roll Number:</strong> <span th:text="${student.rollNumber}">Roll Number</span></p>
-                    <p th:if="${examType != null}"><strong>Exam Type:</strong> <span th:text="${examType.displayName}">Exam Type</span></p>
-                </div>
-                <div th:if="${student == null}" class="alert alert-warning">
-                    Student not found!
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Student Marks Management</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/students}">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/subjects}">Subjects</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/marks}">Marks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/marks/search}">Search Marks</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <!-- Marks Details -->
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Marks Details</h5>
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Marks Results</h2>
+                <a th:href="@{/marks/search}" class="btn btn-secondary">Back to Search</a>
             </div>
-            <div class="card-body">
-                <div th:if="${marks == null || marks.isEmpty()}" class="alert alert-info">
-                    No marks found for this student and exam type.
+
+            <!-- Student Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Student Information</h5>
                 </div>
-                
-                <table th:if="${marks != null && !marks.isEmpty()}" class="table table-striped table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Subject</th>
-                            <th>Marks</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="mark : ${marks}">
-                            <td th:text="${mark.subject.subjectName}">Subject</td>
-                            <td th:text="${mark.marks}">0.0</td>
-                            <td>
-                                <a th:href="@{/marks/edit/{studentId}/{subjectId}/{examType}(studentId=${mark.student.rollNumber},subjectId=${mark.subject.subjectId},examType=${mark.examType})}" 
-                                   class="btn btn-sm btn-warning">Edit</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="card-body">
+                    <div th:if="${student != null}">
+                        <p><strong>Name:</strong> <span th:text="${student.name}">Student Name</span></p>
+                        <p><strong>Roll Number:</strong> <span th:text="${student.rollNumber}">Roll Number</span></p>
+                        <p><strong>Exam Type:</strong> <span th:text="${examType != null ? examType.displayName : 'Unknown'}">Exam Type</span></p>
+                    </div>
+                    <div th:if="${student == null}" class="alert alert-warning">
+                        Student not found!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Marks Details -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Marks Details</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${marks == null || marks.isEmpty()}" class="alert alert-info">
+                        No marks found for this student and exam type.
+                    </div>
+                    
+                    <table th:if="${marks != null && !marks.isEmpty()}" class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="mark : ${marks}">
+                                <td th:text="${mark.subject != null ? mark.subject.subjectName : 'Unknown'}">Subject</td>
+                                <td th:text="${mark.marks != null ? mark.marks : 'N/A'}">0.0</td>
+                                <td>
+                                    <a th:if="${mark.student != null && mark.subject != null}" 
+                                       th:href="@{/marks/edit/{studentId}/{subjectId}/{examType}(studentId=${mark.student.rollNumber},subjectId=${mark.subject.subjectId},examType=${mark.examType})}" 
+                                       class="btn btn-sm btn-warning">Edit</a>
+                                    <span th:if="${mark.student == null || mark.subject == null}">N/A</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <footer class="bg-dark text-light py-3 mt-5">
-        <div class="container text-center">
+        <footer class="text-center mt-5">
             <p>Student Marks Management System &copy; 2023</p>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

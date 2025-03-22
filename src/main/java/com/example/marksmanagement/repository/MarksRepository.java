@@ -16,5 +16,7 @@ public interface MarksRepository extends JpaRepository<Marks, Long> {
     
     List<Marks> findByStudentAndExamType(Student student, ExamType examType);
     
+    List<Marks> findByStudent_RollNumberAndExamType(String rollNumber, ExamType examType);
+    
     Optional<Marks> findByStudentAndSubjectAndExamType(Student student, Subject subject, ExamType examType);
 } 

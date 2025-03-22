@@ -47,8 +47,15 @@ public class MarksServiceImpl implements MarksService {
 
     @Override
     public List<Marks> getMarksByStudentAndExamType(String rollNumber, ExamType examType) {
-        Optional<Student> student = studentRepository.findById(rollNumber);
-        return student.map(s -> marksRepository.findByStudentAndExamType(s, examType)).orElse(Collections.emptyList());
+        try {
+            // First try direct query with rollNumber if repository supports it
+            return marksRepository.findByStudent_RollNumberAndExamType(rollNumber, examType);
+        } catch (Exception e) {
+            // Fallback to the original implementation if direct query fails
+            System.out.println("Direct query failed, falling back to student object query: " + e.getMessage());
+            Optional<Student> student = studentRepository.findById(rollNumber);
+            return student.map(s -> marksRepository.findByStudentAndExamType(s, examType)).orElse(Collections.emptyList());
+        }
     }
 
     @Override

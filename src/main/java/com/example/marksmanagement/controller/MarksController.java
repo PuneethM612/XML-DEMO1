@@ -101,7 +101,7 @@ public class MarksController {
             
             System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);
             
-            // Get student first
+            // First validate if the student exists - this is critical
             Optional<Student> studentOpt = studentService.getStudentByRollNumber(rollNumber);
             if (!studentOpt.isPresent()) {
                 System.out.println("Student not found for roll number: " + rollNumber);
@@ -114,10 +114,20 @@ public class MarksController {
             Student student = studentOpt.get();
             System.out.println("Found student: " + student.getName());
             
-            // Get marks for student and exam type
-            List<Marks> marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
-            System.out.println("Found " + (marks != null ? marks.size() : 0) + " marks for student");
+            // Try-catch specifically for the database operation
+            List<Marks> marks;
+            try {
+                // Get marks for student and exam type
+                marks = marksService.getMarksByStudentAndExamType(rollNumber, examType);
+                System.out.println("Found " + (marks != null ? marks.size() : 0) + " marks for student");
+            } catch (Exception e) {
+                System.err.println("Database error retrieving marks: " + e.getMessage());
+                e.printStackTrace();
+                // Always ensure we have a valid list even on error
+                marks = Collections.emptyList();
+            }
             
+            // Always ensure we don't have null lists
             if (marks == null) {
                 System.out.println("Marks list is null, creating empty list");
                 marks = Collections.emptyList();
@@ -128,6 +138,7 @@ public class MarksController {
             model.addAttribute("student", student);
             model.addAttribute("examType", examType);
             
+            // Return the view without using a layout
             System.out.println("Returning marks-results template");
             return "marks-results";
         } catch (Exception e) {

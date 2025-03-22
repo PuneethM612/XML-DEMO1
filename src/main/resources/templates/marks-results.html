@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Marks Results - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Marks Results</h2>
+            <a th:href="@{/marks/search}" class="btn btn-secondary">Back to Search</a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Student Information</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${student != null}">
+                    <p><strong>Name:</strong> <span th:text="${student.name}"></span></p>
+                    <p><strong>Roll Number:</strong> <span th:text="${student.rollNumber}"></span></p>
+                    <p><strong>Exam Type:</strong> <span th:text="${examType.displayName}"></span></p>
+                </div>
+                <div th:if="${student == null}" class="alert alert-warning">
+                    Student not found!
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Marks Details</h5>
+            </div>
+            <div class="card-body">
+                <div th:if="${marks.empty}" class="alert alert-info">
+                    No marks found for this student and exam type.
+                </div>
+                
+                <div th:unless="${marks.empty}" class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="mark : ${marks}">
+                                <td th:text="${mark.subject.subjectName}"></td>
+                                <td th:text="${mark.marks}"></td>
+                                <td>
+                                    <a th:href="@{/marks/edit/{studentId}/{subjectId}/{examType}(studentId=${mark.student.rollNumber},subjectId=${mark.subject.subjectId},examType=${mark.examType})}" 
+                                       class="btn btn-sm btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Calculate total and average -->
+                    <div th:if="${!marks.empty}" class="mt-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                Summary
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Total Subjects:</strong> <span th:text="${marks.size()}"></span></p>
+                                <p><strong>Average Marks:</strong> 
+                                   <span th:with="sum=0" th:text="${#aggregates.sum(marks.![marks]) / marks.size()}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Add Marks - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Add New Marks</h2>
+            <a th:href="@{/marks}" class="btn btn-secondary">Back to Marks</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/marks/add}" method="post">
+                    <div class="mb-3">
+                        <label for="rollNumber" class="form-label">Student</label>
+                        <select class="form-select" id="rollNumber" name="rollNumber" required>
+                            <option value="">-- Select Student --</option>
+                            <option th:each="student : ${students}" 
+                                    th:value="${student.rollNumber}" 
+                                    th:text="${student.name + ' (' + student.rollNumber + ')'}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="subjectId" class="form-label">Subject</label>
+                        <select class="form-select" id="subjectId" name="subjectId" required>
+                            <option value="">-- Select Subject --</option>
+                            <option th:each="subject : ${subjects}" 
+                                    th:value="${subject.subjectId}" 
+                                    th:text="${subject.subjectName}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="examType" class="form-label">Exam Type</label>
+                        <select class="form-select" id="examType" name="examType" required>
+                            <option value="">-- Select Exam Type --</option>
+                            <option th:each="examType : ${examTypes}" 
+                                    th:value="${examType}" 
+                                    th:text="${examType.displayName}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="marks" class="form-label">Marks</label>
+                        <input type="number" class="form-control" id="marks" name="marks" 
+                               step="0.01" min="0" max="100" required>
+                        <div class="form-text">Enter marks between 0 and 100</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-info">Save Marks</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

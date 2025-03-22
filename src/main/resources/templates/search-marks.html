@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Search Marks - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Search Student Marks</h2>
+            <a th:href="@{/marks}" class="btn btn-secondary">Back to Marks</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/marks/search/results}" method="get">
+                    <div class="mb-3">
+                        <label for="rollNumber" class="form-label">Student</label>
+                        <select class="form-select" id="rollNumber" name="rollNumber" required>
+                            <option value="">-- Select Student --</option>
+                            <option th:each="student : ${students}" 
+                                    th:value="${student.rollNumber}" 
+                                    th:text="${student.name + ' (' + student.rollNumber + ')'}"></option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="examType" class="form-label">Exam Type</label>
+                        <select class="form-select" id="examType" name="examType" required>
+                            <option value="">-- Select Exam Type --</option>
+                            <option th:each="examType : ${examTypes}" 
+                                    th:value="${examType}" 
+                                    th:text="${examType.displayName}"></option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">Search Marks</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

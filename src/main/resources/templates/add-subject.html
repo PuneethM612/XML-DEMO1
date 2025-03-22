@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Add Subject - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Add New Subject</h2>
+            <a th:href="@{/subjects}" class="btn btn-secondary">Back to Subjects</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/subjects/add}" th:object="${subject}" method="post">
+                    <!-- Subject ID is auto-generated -->
+                    <div class="mb-3">
+                        <label for="subjectName" class="form-label">Subject Name</label>
+                        <input type="text" class="form-control" id="subjectName" th:field="*{subjectName}" required>
+                        <div class="form-text">The name of the subject (must be unique)</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Save Subject</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

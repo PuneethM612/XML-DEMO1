@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Edit Marks - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Edit Marks</h2>
+            <a th:href="@{/marks}" class="btn btn-secondary">Back to Marks</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form th:action="@{/marks/edit}" th:object="${marks}" method="post">
+                    <!-- Hidden fields to preserve the entity information -->
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{student.rollNumber}">
+                    <input type="hidden" th:field="*{subject.subjectId}">
+                    <input type="hidden" th:field="*{examType}">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <div class="form-control-plaintext" th:text="${marks.student.name + ' (' + marks.student.rollNumber + ')'}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <div class="form-control-plaintext" th:text="${marks.subject.subjectName}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Exam Type</label>
+                        <div class="form-control-plaintext" th:text="${marks.examType.displayName}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="marks" class="form-label">Marks</label>
+                        <input type="number" class="form-control" id="marks" th:field="*{marks}" 
+                               step="0.01" min="0" max="100" required>
+                        <div class="form-text">Enter marks between 0 and 100</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">Update Marks</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

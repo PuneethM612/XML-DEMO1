@@ -1,0 +1,75 @@
+/* Custom styles for Student Marks Management System */
+
+body {
+    padding-bottom: 20px;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+.btn {
+    border-radius: 0.25rem;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+footer {
+    margin-top: 30px;
+    padding: 15px 0;
+    color: #fff;
+    background-color: #343a40;
+}
+
+/* Custom button colors for student, subject, marks */
+.btn-student {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-subject {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-marks {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 500;
+}
+
+/* Custom table styling */
+.table-marks th {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn {
+        margin-bottom: 5px;
+    }
+} 

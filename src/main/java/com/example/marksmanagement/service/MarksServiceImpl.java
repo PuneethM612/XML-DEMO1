@@ -9,6 +9,7 @@ import com.example.marksmanagement.repository.StudentRepository;
 import com.example.marksmanagement.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,13 +42,13 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public List<Marks> getMarksByStudentRollNumber(String rollNumber) {
         Optional<Student> student = studentRepository.findById(rollNumber);
-        return student.map(marksRepository::findByStudent).orElse(List.of());
+        return student.map(marksRepository::findByStudent).orElse(Collections.emptyList());
     }
 
     @Override
     public List<Marks> getMarksByStudentAndExamType(String rollNumber, ExamType examType) {
         Optional<Student> student = studentRepository.findById(rollNumber);
-        return student.map(s -> marksRepository.findByStudentAndExamType(s, examType)).orElse(List.of());
+        return student.map(s -> marksRepository.findByStudentAndExamType(s, examType)).orElse(Collections.emptyList());
     }
 
     @Override

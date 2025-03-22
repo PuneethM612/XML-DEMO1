@@ -95,8 +95,8 @@ public class MarksController {
             }
             
             if (examType == null) {
-                System.out.println("Exam type is null, defaulting to MIDTERM");
-                examType = ExamType.MIDTERM; // Default to prevent NPE
+                System.out.println("Exam type is null, defaulting to MID");
+                examType = ExamType.MID; // Default to prevent NPE
             }
             
             System.out.println("Searching marks for roll number: " + rollNumber + ", exam type: " + examType);

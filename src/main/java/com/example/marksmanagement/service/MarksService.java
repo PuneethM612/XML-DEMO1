@@ -2,6 +2,7 @@ package com.example.marksmanagement.service;
 
 import com.example.marksmanagement.model.ExamType;
 import com.example.marksmanagement.model.Marks;
+import com.example.marksmanagement.dto.TopRankerDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,6 @@ public interface MarksService {
     Marks updateMarks(Marks marks);
     
     void deleteMarks(Long id);
+
+    List<TopRankerDTO> getTop3Rankers();
 } 

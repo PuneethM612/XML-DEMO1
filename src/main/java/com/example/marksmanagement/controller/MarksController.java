@@ -229,4 +229,11 @@ public class MarksController {
         marksService.deleteMarks(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/top-rankers")
+    public String showTopRankers(Model model) {
+        List<TopRankerDTO> rankers = marksService.getTop3Rankers();
+        model.addAttribute("rankers", rankers);
+        return "top-rankers";
+    }
 } 

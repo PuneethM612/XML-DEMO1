@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
-      th:replace="layout :: layout(~{::title}, ~{::section})">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout(~{::title}, ~{::section})">
+
 <head>
     <title>Students - Student Marks Management</title>
 </head>
+
 <body>
     <section>
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -16,7 +17,7 @@
                 <div th:if="${students.empty}" class="alert alert-info">
                     No students found. Please add a new student.
                 </div>
-                
+
                 <div th:unless="${students.empty}" class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead class="table-dark">
@@ -31,8 +32,8 @@
                                 <td th:text="${student.rollNumber}"></td>
                                 <td th:text="${student.name}"></td>
                                 <td>
-                                    <a th:href="@{/marks/search/results(rollNumber=${student.rollNumber},examType=MID)}" 
-                                       class="btn btn-sm btn-info">View Marks</a>
+                                    <a th:href="@{/marks/search/results(rollNumber=${student.rollNumber},examType=MID)}"
+                                        class="btn btn-sm btn-info">View Marks</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -42,4 +43,5 @@
         </div>
     </section>
 </body>
-</html> 
+
+</html>

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Comparator;
 
 @Service
 public class MarksServiceImpl implements MarksService {
@@ -100,5 +103,28 @@ public class MarksServiceImpl implements MarksService {
     @Override
     public void deleteMarks(Long id) {
         marksRepository.deleteById(id);
+    }
+
+    @Override
+    public List<TopRankerDTO> getTop3Rankers() {
+        List<Marks> allMarks = marksRepository.findAll();
+        
+        // Group marks by student and calculate average
+        Map<Student, Double> studentAverages = allMarks.stream()
+            .collect(Collectors.groupingBy(
+                Marks::getStudent,
+                Collectors.averagingDouble(Marks::getMarks)
+            ));
+        
+        // Convert to DTOs and sort by average marks
+        return studentAverages.entrySet().stream()
+            .map(entry -> new TopRankerDTO(
+                entry.getKey().getName(),
+                entry.getKey().getRollNumber(),
+                entry.getValue()
+            ))
+            .sorted(Comparator.comparing(TopRankerDTO::getAverageMarks).reversed())
+            .limit(3)
+            .collect(Collectors.toList());
     }
 } 

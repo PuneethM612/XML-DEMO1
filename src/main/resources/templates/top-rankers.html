@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="layout :: layout(~{::title}, ~{::section})">
+<head>
+    <title>Top Rankers - Student Marks Management</title>
+</head>
+<body>
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Top 3 Rankers</h2>
+            <a th:href="@{/marks}" class="btn btn-secondary">Back to Marks</a>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div th:if="${rankers.empty}" class="alert alert-info">
+                    No marks data available to determine rankers.
+                </div>
+
+                <div th:unless="${rankers.empty}" class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Student Name</th>
+                                <th>Roll Number</th>
+                                <th>Average Marks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ranker, stat : ${rankers}">
+                                <td>
+                                    <span th:if="${stat.index == 0}" class="badge bg-warning text-dark">🥇 1st</span>
+                                    <span th:if="${stat.index == 1}" class="badge bg-secondary">🥈 2nd</span>
+                                    <span th:if="${stat.index == 2}" class="badge bg-danger">🥉 3rd</span>
+                                </td>
+                                <td th:text="${ranker.studentName}"></td>
+                                <td th:text="${ranker.rollNumber}"></td>
+                                <td th:text="${#numbers.formatDecimal(ranker.averageMarks, 1, 2)}"></td>
+                                <td>
+                                    <a th:href="@{/marks/search/results(rollNumber=${ranker.rollNumber},examType=MID)}"
+                                        class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

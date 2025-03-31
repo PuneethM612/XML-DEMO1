@@ -109,21 +109,45 @@ public class MarksServiceImpl implements MarksService {
     public List<TopRankerDTO> getTop3Rankers() {
         List<Marks> allMarks = marksRepository.findAll();
         
-        // Group marks by student and calculate average
-        Map<Student, Double> studentAverages = allMarks.stream()
+        // Group marks by student and calculate total
+        Map<Student, Double> studentTotals = allMarks.stream()
             .collect(Collectors.groupingBy(
                 Marks::getStudent,
-                Collectors.averagingDouble(Marks::getMarks)
+                Collectors.summingDouble(Marks::getMarks)
             ));
         
-        // Convert to DTOs and sort by average marks
-        return studentAverages.entrySet().stream()
+        // Convert to DTOs and sort by total marks
+        return studentTotals.entrySet().stream()
             .map(entry -> new TopRankerDTO(
                 entry.getKey().getName(),
                 entry.getKey().getRollNumber(),
                 entry.getValue()
             ))
-            .sorted(Comparator.comparing(TopRankerDTO::getAverageMarks).reversed())
+            .sorted(Comparator.comparing(TopRankerDTO::getTotalMarks).reversed())
+            .limit(3)
+            .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<TopRankerDTO> getTop3RankersByExamType(ExamType examType) {
+        List<Marks> allMarks = marksRepository.findAll();
+        
+        // Filter by exam type and group marks by student and calculate total
+        Map<Student, Double> studentTotals = allMarks.stream()
+            .filter(mark -> mark.getExamType() == examType)
+            .collect(Collectors.groupingBy(
+                Marks::getStudent,
+                Collectors.summingDouble(Marks::getMarks)
+            ));
+        
+        // Convert to DTOs and sort by total marks
+        return studentTotals.entrySet().stream()
+            .map(entry -> new TopRankerDTO(
+                entry.getKey().getName(),
+                entry.getKey().getRollNumber(),
+                entry.getValue()
+            ))
+            .sorted(Comparator.comparing(TopRankerDTO::getTotalMarks).reversed())
             .limit(3)
             .collect(Collectors.toList());
     }

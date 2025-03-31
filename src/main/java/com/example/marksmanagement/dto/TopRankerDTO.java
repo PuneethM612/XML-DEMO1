@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class TopRankerDTO {
     private String studentName;
     private String rollNumber;
-    private Double averageMarks;
+    private Double totalMarks;
 } 

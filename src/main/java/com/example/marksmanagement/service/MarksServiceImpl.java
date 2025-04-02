@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Comparator;
+import java.util.ArrayList;
 
 @Service
 public class MarksServiceImpl implements MarksService {
@@ -107,48 +108,33 @@ public class MarksServiceImpl implements MarksService {
 
     @Override
     public List<TopRankerDTO> getTop3Rankers() {
-        List<Marks> allMarks = marksRepository.findAll();
+        List<Object[]> topStudents = marksRepository.findTop3Students();
+        List<TopRankerDTO> result = new ArrayList<>();
         
-        // Group marks by student and calculate total
-        Map<Student, Double> studentTotals = allMarks.stream()
-            .collect(Collectors.groupingBy(
-                Marks::getStudent,
-                Collectors.summingDouble(Marks::getMarks)
-            ));
+        for (Object[] student : topStudents) {
+            String rollNumber = (String) student[0];
+            String studentName = (String) student[1];
+            Double totalMarks = ((Number) student[2]).doubleValue();
+            
+            result.add(new TopRankerDTO(studentName, rollNumber, totalMarks));
+        }
         
-        // Convert to DTOs and sort by total marks
-        return studentTotals.entrySet().stream()
-            .map(entry -> new TopRankerDTO(
-                entry.getKey().getName(),
-                entry.getKey().getRollNumber(),
-                entry.getValue()
-            ))
-            .sorted(Comparator.comparing(TopRankerDTO::getTotalMarks).reversed())
-            .limit(3)
-            .collect(Collectors.toList());
+        return result;
     }
     
     @Override
     public List<TopRankerDTO> getTop3RankersByExamType(ExamType examType) {
-        List<Marks> allMarks = marksRepository.findAll();
+        List<Object[]> topStudents = marksRepository.findTop3StudentsByExamType(examType.name());
+        List<TopRankerDTO> result = new ArrayList<>();
         
-        // Filter by exam type and group marks by student and calculate total
-        Map<Student, Double> studentTotals = allMarks.stream()
-            .filter(mark -> mark.getExamType() == examType)
-            .collect(Collectors.groupingBy(
-                Marks::getStudent,
-                Collectors.summingDouble(Marks::getMarks)
-            ));
+        for (Object[] student : topStudents) {
+            String rollNumber = (String) student[0];
+            String studentName = (String) student[1];
+            Double totalMarks = ((Number) student[2]).doubleValue();
+            
+            result.add(new TopRankerDTO(studentName, rollNumber, totalMarks));
+        }
         
-        // Convert to DTOs and sort by total marks
-        return studentTotals.entrySet().stream()
-            .map(entry -> new TopRankerDTO(
-                entry.getKey().getName(),
-                entry.getKey().getRollNumber(),
-                entry.getValue()
-            ))
-            .sorted(Comparator.comparing(TopRankerDTO::getTotalMarks).reversed())
-            .limit(3)
-            .collect(Collectors.toList());
+        return result;
     }
 } 

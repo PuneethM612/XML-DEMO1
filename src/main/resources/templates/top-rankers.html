@@ -28,8 +28,12 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                        <a th:if="${selectedExamType != null}" th:href="@{/marks/top-rankers}" class="btn btn-outline-secondary">Clear Filter</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-filter"></i> Apply Filter
+                        </button>
+                        <a th:if="${selectedExamType != null}" th:href="@{/marks/top-rankers}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Clear Filter
+                        </a>
                     </div>
                 </form>
             </div>
@@ -38,10 +42,11 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0" th:text="${selectedExamType != null ? 'Top Rankers for ' + selectedExamType.displayName + ' Exam' : 'Overall Top Rankers'}"></h5>
+                <small class="text-muted">Ranked by Total Marks across all subjects</small>
             </div>
             <div class="card-body">
                 <div th:if="${rankers.empty}" class="alert alert-info">
-                    No marks data available to determine rankers.
+                    <i class="bi bi-info-circle"></i> No marks data available to determine rankers.
                 </div>
 
                 <div th:unless="${rankers.empty}" class="table-responsive">
@@ -67,7 +72,9 @@
                                 <td th:text="${#numbers.formatDecimal(ranker.totalMarks, 1, 2)}"></td>
                                 <td>
                                     <a th:href="@{/marks/search/results(rollNumber=${ranker.rollNumber}, examType=${selectedExamType != null ? selectedExamType : 'MID'})}"
-                                        class="btn btn-sm btn-info">View Details</a>
+                                        class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

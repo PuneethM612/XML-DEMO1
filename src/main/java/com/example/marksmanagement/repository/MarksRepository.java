@@ -22,4 +22,21 @@ public interface MarksRepository extends JpaRepository<Marks, Long> {
     List<Marks> findByStudent_RollNumberAndExamType(@Param("rollNumber") String rollNumber, @Param("examType") ExamType examType);
     
     Optional<Marks> findByStudentAndSubjectAndExamType(Student student, Subject subject, ExamType examType);
+    
+    @Query(value = "SELECT s.roll_number as rollNumber, s.name as studentName, SUM(m.marks) as totalMarks " +
+            "FROM students s " +
+            "JOIN marks m ON s.roll_number = m.student_id " +
+            "WHERE m.exam_type = :examType " +
+            "GROUP BY s.roll_number, s.name " +
+            "ORDER BY totalMarks DESC " +
+            "LIMIT 3", nativeQuery = true)
+    List<Object[]> findTop3StudentsByExamType(@Param("examType") String examType);
+    
+    @Query(value = "SELECT s.roll_number as rollNumber, s.name as studentName, SUM(m.marks) as totalMarks " +
+            "FROM students s " +
+            "JOIN marks m ON s.roll_number = m.student_id " +
+            "GROUP BY s.roll_number, s.name " +
+            "ORDER BY totalMarks DESC " +
+            "LIMIT 3", nativeQuery = true)
+    List<Object[]> findTop3Students();
 } 
